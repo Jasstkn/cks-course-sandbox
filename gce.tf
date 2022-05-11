@@ -3,6 +3,8 @@ resource "google_compute_instance" "cks" {
   name         = "cks-${each.key}"
   machine_type = "e2-medium"
 
+  desired_status = var.desired_status
+
   boot_disk {
     initialize_params {
       image = "projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20220419"
