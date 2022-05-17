@@ -8,7 +8,7 @@ resource "google_compute_instance" "cks" {
   boot_disk {
     initialize_params {
       image = "projects/ubuntu-os-cloud/global/images/ubuntu-2004-focal-v20220419"
-      size = 40
+      size  = 40
     }
   }
 
