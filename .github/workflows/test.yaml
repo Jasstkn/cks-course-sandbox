@@ -37,4 +37,3 @@ jobs:
       - name: Execute pre-commit
         run: |
           pre-commit run --color=always --show-diff-on-failure --all-files || true
-          git diff

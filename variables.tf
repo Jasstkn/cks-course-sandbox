@@ -20,12 +20,12 @@ variable "cluster-roles" {
 }
 
 variable "desired_status" {
-  default     = "RUNNING"
   type        = string
+  default     = "RUNNING"
   description = "(Optional) Desired status of GCE"
 
-  validation {
-    condition     = contains(["RUNNING", "TERMINATED"], var.desired_status)
-    error_message = "GCE status must be \"RUNNING\" or \"TERMINATED\"."
-  }
+  # validation {
+  #   condition     = contains(["RUNNING", "TERMINATED"], var.desired_status)
+  #   error_message = "GCE status must be \"RUNNING\" or \"TERMINATED\"."
+  # }
 }
