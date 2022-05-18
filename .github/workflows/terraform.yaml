@@ -1,0 +1,65 @@
+name: terraform
+
+on:
+  workflow_dispatch:
+    inputs:
+      desired_status:
+        description: "VM status"
+        required: true
+        type: choice
+        options:
+        - RUNNING
+        - TERMINATED
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    name: terraform
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+      - name: setup terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.1.9
+      - name: terraform-init
+        run: |
+          echo $GOOGLE_APPLICATION_CREDENTIALS_JSON >> creds.json
+          export GOOGLE_APPLICATION_CREDENTIALS=creds.json
+          terraform init -input=false -no-color
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+      - name: terraform-plan
+        run: |
+          export GOOGLE_APPLICATION_CREDENTIALS=creds.json
+          terraform plan \
+            -input=false \
+            -no-color \
+            -out terraform.tfplan
+        env:
+          TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
+          TF_VAR_region: "europe-central2"
+          TF_VAR_zone: "europe-central2-a"
+          TF_VAR_desired_status: ${{ github.event.inputs.desired_status  }}
+      - name: terraform-apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: |
+          export GOOGLE_APPLICATION_CREDENTIALS=creds.json
+          terraform apply \
+            -input=false \
+            -no-color \
+            -auto-approve \
+            terraform.tfplan
+        env:
+          TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
+          TF_VAR_region: "europe-central2"
+          TF_VAR_zone: "europe-central2-a"
+          TF_VAR_desired_status: ${{ github.event.inputs.desired_status  }}
