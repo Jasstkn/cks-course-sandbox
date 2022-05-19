@@ -38,6 +38,33 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
       - name: terraform-plan
+        if: github.event_name != 'workflow_dispatch'
+        run: |
+          export GOOGLE_APPLICATION_CREDENTIALS=creds.json
+          terraform plan \
+            -input=false \
+            -no-color \
+            -out terraform.tfplan
+        env:
+          TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
+          TF_VAR_region: "europe-central2"
+          TF_VAR_zone: "europe-central2-a"
+      - name: terraform-apply
+        if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch'
+        run: |
+          export GOOGLE_APPLICATION_CREDENTIALS=creds.json
+          terraform apply \
+            -input=false \
+            -no-color \
+            -auto-approve \
+            terraform.tfplan
+        env:
+          TF_VAR_project_id: ${{ secrets.TF_VAR_project_id }}
+          TF_VAR_region: "europe-central2"
+          TF_VAR_zone: "europe-central2-a"
+      # support dispatch
+      - name: manual-terraform-plan
+        if: github.event_name == 'workflow_dispatch'
         run: |
           export GOOGLE_APPLICATION_CREDENTIALS=creds.json
           terraform plan \
@@ -49,8 +76,8 @@ jobs:
           TF_VAR_region: "europe-central2"
           TF_VAR_zone: "europe-central2-a"
           TF_VAR_desired_status: ${{ github.event.inputs.desired_status  }}
-      - name: terraform-apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      - name: manual-terraform-apply
+        if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch'
         run: |
           export GOOGLE_APPLICATION_CREDENTIALS=creds.json
           terraform apply \
