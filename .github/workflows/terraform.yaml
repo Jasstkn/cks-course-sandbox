@@ -77,7 +77,7 @@ jobs:
           TF_VAR_zone: "europe-central2-a"
           TF_VAR_desired_status: ${{ github.event.inputs.desired_status  }}
       - name: manual-terraform-apply
-        if: github.ref == 'refs/heads/main' && github.event_name != 'workflow_dispatch'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch'
         run: |
           export GOOGLE_APPLICATION_CREDENTIALS=creds.json
           terraform apply \
