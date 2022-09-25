@@ -1,8 +1,8 @@
 terraform {
-  required_version = "1.1.9"
+  required_version = "1.2.6"
 
   backend "gcs" {
-    bucket = "tfstate-tokyo-analyst"
+    bucket = "terraform-focal-limiter"
     prefix = "state/sandbox"
   }
 
