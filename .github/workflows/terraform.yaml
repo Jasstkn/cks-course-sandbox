@@ -29,7 +29,7 @@ jobs:
       - name: setup terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.1.9
+          terraform_version: 1.2.6
       - name: terraform-init
         run: |
           echo $GOOGLE_APPLICATION_CREDENTIALS_JSON >> creds.json
